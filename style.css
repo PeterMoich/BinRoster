@@ -1,0 +1,334 @@
+:root {
+  --paper: #F6F5F1;
+  --green: #2B4531;
+  --green-light: #3D5C42;
+  --amber: #D4A039;
+  --charcoal: #26261F;
+  --sage: #C9CFC4;
+  --sage-light: #E4E7DF;
+  --white: #FFFFFF;
+  --error: #B0432B;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--charcoal);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+.site-header {
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green-light);
+  margin: 0 0 4px;
+}
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 42px;
+  margin: 0;
+  color: var(--green);
+}
+
+h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--green);
+  margin: 0 0 16px;
+}
+
+/* --- Signature tag card --- */
+.tag-card {
+  position: relative;
+  background: var(--green);
+  color: var(--paper);
+  border-radius: 4px 4px 14px 14px;
+  padding: 28px 28px 24px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 24px rgba(43, 69, 49, 0.18);
+}
+
+.tag-notch {
+  position: absolute;
+  top: -10px;
+  left: 28px;
+  width: 20px;
+  height: 20px;
+  background: var(--amber);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.tag-notch::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+}
+
+.tag-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin: 8px 0 8px;
+}
+
+.tag-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  margin: 0 0 6px;
+  opacity: 0.85;
+}
+
+.tag-name {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 30px;
+  margin: 0;
+}
+
+/* --- Admin area --- */
+.admin-area {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--sage);
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--green-light);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link-btn:hover { color: var(--green); }
+
+.login-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.login-form input {
+  flex: 1 1 180px;
+}
+
+.hidden { display: none !important; }
+
+input[type="text"], input[type="email"], input[type="password"], select {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--sage);
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--charcoal);
+}
+
+input:focus, select:focus, button:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 1px;
+}
+
+.btn {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.btn:hover { opacity: 0.88; }
+
+.btn-primary {
+  background: var(--green);
+  color: var(--paper);
+}
+
+.btn-secondary {
+  background: var(--sage-light);
+  color: var(--green);
+}
+
+.error-text {
+  width: 100%;
+  color: var(--error);
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.admin-panel {
+  margin-top: 20px;
+}
+
+.admin-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.admin-signed-in {
+  font-size: 13px;
+  color: var(--charcoal);
+  margin: 0;
+}
+
+.admin-signed-in span {
+  font-weight: 600;
+}
+
+.field-row {
+  margin-bottom: 18px;
+}
+
+.field-row label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--green-light);
+  margin-bottom: 8px;
+}
+
+.tenant-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.tenant-input-group input {
+  flex: 1;
+}
+
+.tenant-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tenant-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--sage-light);
+  border-radius: 20px;
+  padding: 6px 8px 6px 14px;
+  font-size: 14px;
+}
+
+.tenant-list .remove-tenant {
+  background: none;
+  border: none;
+  color: var(--green);
+  font-weight: 700;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  line-height: 1;
+  font-size: 14px;
+}
+
+.tenant-list .remove-tenant:hover {
+  background: var(--sage);
+}
+
+.save-status {
+  font-size: 13px;
+  color: var(--green-light);
+  margin: 10px 0 0;
+}
+
+/* --- Roster table --- */
+.schedule-range {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--green-light);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.roster-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+}
+
+.roster-table th {
+  text-align: left;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green-light);
+  padding: 0 0 10px;
+  border-bottom: 2px solid var(--green);
+  font-weight: 600;
+}
+
+.roster-table td {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--sage);
+}
+
+.roster-table tr.is-today td {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.roster-table tr.is-today td:last-child::after {
+  content: ' ●';
+  color: var(--amber);
+}
+
+.empty-row td {
+  color: #8a8a7a;
+  font-style: italic;
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 32px; }
+  .tag-name { font-size: 24px; }
+  .wrap { padding: 32px 16px 64px; }
+}

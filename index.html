@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bin Roster</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="site-header">
+    <p class="eyebrow">Household duty roster</p>
+    <h1>Bin Day</h1>
+  </header>
+
+  <!-- Signature "up next" tag -->
+  <section id="up-next" class="tag-card">
+    <div class="tag-notch"></div>
+    <p class="tag-label">Next out</p>
+    <p class="tag-date" id="next-date">—</p>
+    <p class="tag-name" id="next-name">Set up a roster to begin</p>
+  </section>
+
+  <!-- Admin login (collapsed by default) -->
+  <section id="admin-area" class="admin-area">
+    <button id="admin-toggle" class="link-btn" type="button">Admin login</button>
+
+    <form id="login-form" class="login-form hidden">
+      <input type="email" id="login-email" placeholder="Email" required autocomplete="username">
+      <input type="password" id="login-password" placeholder="Password" required autocomplete="current-password">
+      <button type="submit" class="btn btn-primary">Log in</button>
+      <p id="login-error" class="error-text hidden"></p>
+    </form>
+
+    <div id="admin-panel" class="admin-panel hidden">
+      <div class="admin-panel-head">
+        <p class="admin-signed-in">Signed in as <span id="admin-email"></span></p>
+        <button id="logout-btn" class="link-btn" type="button">Log out</button>
+      </div>
+
+      <div class="field-row">
+        <label for="bin-day">Bin day</label>
+        <select id="bin-day">
+          <option value="1">Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5">Friday</option>
+          <option value="6">Saturday</option>
+          <option value="0">Sunday</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <label for="tenant-input">Tenants</label>
+        <div class="tenant-input-group">
+          <input type="text" id="tenant-input" placeholder="Add a tenant name">
+          <button id="add-tenant-btn" class="btn btn-secondary" type="button">Add</button>
+        </div>
+      </div>
+
+      <ul id="tenant-list" class="tenant-list"></ul>
+
+      <button id="generate-btn" class="btn btn-primary" type="button">Generate roster</button>
+      <p id="save-status" class="save-status hidden"></p>
+    </div>
+  </section>
+
+  <!-- Roster table -->
+  <section class="roster-section">
+    <h2>Full schedule <span id="schedule-range" class="schedule-range"></span></h2>
+    <table id="roster-table" class="roster-table">
+      <thead>
+        <tr><th>Date</th><th>Day</th><th>Tenant</th></tr>
+      </thead>
+      <tbody id="roster-body">
+        <tr class="empty-row"><td colspan="3">No roster yet.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
