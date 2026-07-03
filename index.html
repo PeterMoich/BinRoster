@@ -10,6 +10,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -25,7 +28,10 @@
     <div class="tag-notch"></div>
     <p class="tag-label">Next out</p>
     <p class="tag-date" id="next-date">—</p>
-    <p class="tag-name" id="next-name">Set up a roster to begin</p>
+    <p class="tag-name tag-name-row">
+      <span id="next-dot" class="tenant-dot hidden"></span>
+      <span id="next-name">Set up a roster to begin</span>
+    </p>
   </section>
 
   <!-- Admin login (collapsed by default) -->
@@ -68,14 +74,20 @@
 
       <ul id="tenant-list" class="tenant-list"></ul>
 
-      <button id="generate-btn" class="btn btn-primary" type="button">Generate roster</button>
+      <div class="admin-actions">
+        <button id="generate-btn" class="btn btn-primary" type="button">Generate roster</button>
+        <button id="reset-btn" class="btn btn-danger" type="button">Reset roster</button>
+      </div>
       <p id="save-status" class="save-status hidden"></p>
     </div>
   </section>
 
   <!-- Roster table -->
   <section class="roster-section">
-    <h2>Full schedule <span id="schedule-range" class="schedule-range"></span></h2>
+    <div class="roster-section-head">
+      <h2>Full schedule <span id="schedule-range" class="schedule-range"></span></h2>
+      <button id="download-pdf-btn" class="btn btn-secondary" type="button">Download PDF</button>
+    </div>
     <table id="roster-table" class="roster-table">
       <thead>
         <tr><th>Date</th><th>Day</th><th>Tenant</th></tr>

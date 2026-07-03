@@ -79,6 +79,28 @@ function escapeHtml(str) {
   return $("<div>").text(str).html();
 }
 
+// ---- Tenant color coding ----
+// Each tenant gets a consistent color derived from their name, so the same
+// person always shows the same color across the tag card, table, and PDF.
+const TENANT_COLORS = [
+  "#B5651D", // ochre
+  "#3A6EA5", // blue
+  "#9C4F6B", // mauve
+  "#2E7D6B", // teal
+  "#6B4E9E", // violet
+  "#7C6B2E", // olive gold
+  "#4E7A3A", // moss green
+  "#A5453A"  // brick red
+];
+
+function colorForName(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+  }
+  return TENANT_COLORS[hash % TENANT_COLORS.length];
+}
+
 // ---- Rendering ----
 
 function renderPublicView(data) {
@@ -89,9 +111,11 @@ function renderPublicView(data) {
   if (upcoming.length) {
     $("#next-date").text(displayDate(upcoming[0].date));
     $("#next-name").text(upcoming[0].tenant);
+    $("#next-dot").css("background-color", colorForName(upcoming[0].tenant)).removeClass("hidden");
   } else {
     $("#next-date").text("—");
     $("#next-name").text(generatedRoster.length ? "Roster ended — regenerate for next year" : "No roster set yet");
+    $("#next-dot").addClass("hidden");
   }
 
   const $body = $("#roster-body").empty();
@@ -104,7 +128,12 @@ function renderPublicView(data) {
         `<tr class="${isToday ? "is-today" : ""}">
           <td>${displayDate(r.date)}</td>
           <td>${dayName(r.date)}</td>
-          <td>${escapeHtml(r.tenant)}</td>
+          <td>
+            <span class="tenant-name-cell">
+              <span class="tenant-dot" style="background-color:${colorForName(r.tenant)}"></span>
+              ${escapeHtml(r.tenant)}
+            </span>
+          </td>
         </tr>`
       );
     });
@@ -118,7 +147,11 @@ function renderTenantList() {
   const $list = $("#tenant-list").empty();
   editState.tenants.forEach((name, i) => {
     $list.append(
-      `<li data-index="${i}">${escapeHtml(name)} <button class="remove-tenant" type="button" aria-label="Remove ${escapeHtml(name)}">×</button></li>`
+      `<li data-index="${i}">
+        <span class="tenant-dot" style="background-color:${colorForName(name)}"></span>
+        ${escapeHtml(name)}
+        <button class="remove-tenant" type="button" aria-label="Remove ${escapeHtml(name)}">×</button>
+      </li>`
     );
   });
 }
@@ -242,4 +275,77 @@ $("#generate-btn").on("click", async () => {
     console.error(err);
     $("#save-status").text("Couldn't save — check your connection and try again.");
   }
+});
+
+// ---- Admin: reset roster ----
+
+$("#reset-btn").on("click", async () => {
+  const confirmed = window.confirm(
+    "Reset the roster? This clears all tenants and the schedule. This can't be undone."
+  );
+  if (!confirmed) return;
+
+  editState.tenants = [];
+  renderTenantList();
+
+  $("#save-status").text("Resetting…").removeClass("hidden");
+  try {
+    await setDoc(rosterRef, {
+      tenants: [],
+      binDay: editState.binDay,
+      generatedRoster: [],
+      updatedAt: serverTimestamp()
+    });
+    $("#save-status").text("Reset ✓");
+    setTimeout(() => $("#save-status").addClass("hidden"), 2500);
+  } catch (err) {
+    console.error(err);
+    $("#save-status").text("Couldn't reset — check your connection and try again.");
+  }
+});
+
+// ---- Download PDF ----
+
+$("#download-pdf-btn").on("click", () => {
+  const generatedRoster = currentConfig.generatedRoster || [];
+  if (!generatedRoster.length) {
+    alert("There's no roster to download yet.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(18);
+  pdf.text("Bin Roster", 14, 18);
+
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(11);
+  pdf.setTextColor(100);
+  const rangeText = `${displayDate(generatedRoster[0].date)} - ${displayDate(generatedRoster[generatedRoster.length - 1].date)}`;
+  pdf.text(rangeText, 14, 26);
+
+  const rows = generatedRoster.map(r => [displayDate(r.date), dayName(r.date), r.tenant]);
+
+  pdf.autoTable({
+    head: [["Date", "Day", "Tenant"]],
+    body: rows,
+    startY: 34,
+    headStyles: { fillColor: [43, 69, 49] }, // matches --green
+    didParseCell: (data) => {
+      if (data.section === "body" && data.column.index === 2) {
+        const hex = colorForName(data.cell.raw);
+        const rgb = [
+          parseInt(hex.slice(1, 3), 16),
+          parseInt(hex.slice(3, 5), 16),
+          parseInt(hex.slice(5, 7), 16)
+        ];
+        data.cell.styles.textColor = rgb;
+        data.cell.styles.fontStyle = "bold";
+      }
+    }
+  });
+
+  pdf.save("bin-roster.pdf");
 });

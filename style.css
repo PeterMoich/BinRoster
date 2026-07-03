@@ -186,6 +186,24 @@ input:focus, select:focus, button:focus-visible {
   color: var(--green);
 }
 
+.btn-danger {
+  background: transparent;
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.btn-danger:hover {
+  background: var(--error);
+  color: var(--paper);
+  opacity: 1;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .error-text {
   width: 100%;
   color: var(--error);
@@ -256,6 +274,31 @@ input:focus, select:focus, button:focus-visible {
   font-size: 14px;
 }
 
+.tenant-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tenant-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tag-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tag-name-row .tenant-dot {
+  width: 12px;
+  height: 12px;
+}
+
 .tenant-list .remove-tenant {
   background: none;
   border: none;
@@ -280,6 +323,19 @@ input:focus, select:focus, button:focus-visible {
 }
 
 /* --- Roster table --- */
+.roster-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.roster-section-head h2 {
+  margin: 0;
+}
+
 .schedule-range {
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
