@@ -141,7 +141,10 @@ function renderPublicView(data) {
 
       $body.append(
         `<tr class="${isToday ? "is-today" : ""}"
-          style="background-color:${tenantColor}20; border-left: 6px solid ${tenantColor};"
+          style="
+  background:${hexToRGBA(tenantColor)};
+  border-left:6px solid ${tenantColor};
+">
           <td>${displayDate(r.date)}</td>
           <td>${dayName(r.date)}</td>
           <td>${escapeHtml(r.tenant)}</td>
@@ -270,28 +273,30 @@ $("#generate-btn").on("click", async () => {
     return;
   }
 
-const startMonth = $("#start-month").val();
-const endMonth = $("#end-month").val();
+  const startMonth = $("#start-month").val();
+  const endMonth = $("#end-month").val();
 
-if (!startMonth || !endMonth) {
-  $("#save-status")
-    .text("Select start and end months.")
-    .removeClass("hidden");
-  return;
-}
+  if (!startMonth || !endMonth) {
+    $("#save-status")
+      .text("Select start and end months.")
+      .removeClass("hidden");
+    return;
+  }
 
-const generatedRoster = buildRoster(
-  editState.tenants,
-  editState.binDay,
-  startMonth,
-  endMonth
-);
+  const generatedRoster = buildRoster(
+    editState.tenants,
+    editState.binDay,
+    startMonth,
+    endMonth
+  );
 
   $("#save-status").text("Saving…").removeClass("hidden");
   try {
     await setDoc(rosterRef, {
       tenants: editState.tenants,
       binDay: editState.binDay,
+      startMonth,
+      endMonth,
       generatedRoster,
       updatedAt: serverTimestamp()
     });
@@ -349,8 +354,7 @@ $("#download-pdf-btn").on("click", () => {
 
   pdf.setFontSize(10);
   pdf.text(
-    `${displayDate(generatedRoster[0].date)} - ${
-      displayDate(generatedRoster[generatedRoster.length - 1].date)
+    `${displayDate(generatedRoster[0].date)} - ${displayDate(generatedRoster[generatedRoster.length - 1].date)
     }`,
     14,
     26
@@ -370,7 +374,7 @@ $("#download-pdf-btn").on("click", () => {
       fillColor: [43, 69, 49]
     },
 
-    didParseCell: function(data) {
+    didParseCell: function (data) {
 
       if (data.section === "body") {
 
@@ -380,14 +384,22 @@ $("#download-pdf-btn").on("click", () => {
         const hex =
           colorForName(tenant);
 
+        function hexToRGBA(hex, opacity = 0.12) {
+          const r = parseInt(hex.slice(1, 3), 16);
+          const g = parseInt(hex.slice(3, 5), 16);
+          const b = parseInt(hex.slice(5, 7), 16);
+
+          return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        }
+
         const rgb = [
-          parseInt(hex.substr(1,2),16),
-          parseInt(hex.substr(3,2),16),
-          parseInt(hex.substr(5,2),16)
+          parseInt(hex.substr(1, 2), 16),
+          parseInt(hex.substr(3, 2), 16),
+          parseInt(hex.substr(5, 2), 16)
         ];
 
         data.cell.styles.fillColor = rgb;
-        data.cell.styles.textColor = [255,255,255];
+        data.cell.styles.textColor = [255, 255, 255];
       }
     }
   });
