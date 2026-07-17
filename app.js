@@ -57,21 +57,32 @@ function nextOccurrence(dayOfWeek, fromDate) {
 }
 
 // Build the full weekly roster from today through Dec 31 of this year
-function buildRoster(tenants, binDay) {
+function buildRoster(tenants, binDay, startMonth, endMonth) {
   if (!tenants.length) return [];
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const endOfYear = new Date(today.getFullYear(), 11, 31);
+
+  const start = new Date(startMonth + "-01");
+
+  const [endYear, endMon] = endMonth.split("-").map(Number);
+  const end = new Date(endYear, endMon, 0);
 
   const roster = [];
-  let current = nextOccurrence(binDay, today);
+
+  let current = nextOccurrence(binDay, start);
+
   let i = 0;
-  while (current <= endOfYear) {
-    roster.push({ date: toISO(current), tenant: tenants[i % tenants.length] });
+
+  while (current <= end) {
+    roster.push({
+      date: toISO(current),
+      tenant: tenants[i % tenants.length]
+    });
+
     current = new Date(current);
     current.setDate(current.getDate() + 7);
+
     i++;
   }
+
   return roster;
 }
 
@@ -124,16 +135,14 @@ function renderPublicView(data) {
   } else {
     generatedRoster.forEach(r => {
       const isToday = r.date === todayStr;
+      const tenantColor = colorForName(r.tenant);
+
       $body.append(
-        `<tr class="${isToday ? "is-today" : ""}">
+        `<tr class="${isToday ? "is-today" : ""}"
+          style="background-color:${tenantColor};color:white;"
           <td>${displayDate(r.date)}</td>
           <td>${dayName(r.date)}</td>
-          <td>
-            <span class="tenant-name-cell">
-              <span class="tenant-dot" style="background-color:${colorForName(r.tenant)}"></span>
-              ${escapeHtml(r.tenant)}
-            </span>
-          </td>
+          <td>${escapeHtml(r.tenant)}</td>
         </tr>`
       );
     });
@@ -259,7 +268,22 @@ $("#generate-btn").on("click", async () => {
     return;
   }
 
-  const generatedRoster = buildRoster(editState.tenants, editState.binDay);
+const startMonth = $("#start-month").val();
+const endMonth = $("#end-month").val();
+
+if (!startMonth || !endMonth) {
+  $("#save-status")
+    .text("Select start and end months.")
+    .removeClass("hidden");
+  return;
+}
+
+const generatedRoster = buildRoster(
+  editState.tenants,
+  editState.binDay,
+  startMonth,
+  endMonth
+);
 
   $("#save-status").text("Saving…").removeClass("hidden");
   try {
@@ -307,42 +331,61 @@ $("#reset-btn").on("click", async () => {
 // ---- Download PDF ----
 
 $("#download-pdf-btn").on("click", () => {
+
   const generatedRoster = currentConfig.generatedRoster || [];
+
   if (!generatedRoster.length) {
-    alert("There's no roster to download yet.");
+    alert("No roster available.");
     return;
   }
 
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
 
-  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(18);
   pdf.text("Bin Roster", 14, 18);
 
-  pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(11);
-  pdf.setTextColor(100);
-  const rangeText = `${displayDate(generatedRoster[0].date)} - ${displayDate(generatedRoster[generatedRoster.length - 1].date)}`;
-  pdf.text(rangeText, 14, 26);
-
-  const rows = generatedRoster.map(r => [displayDate(r.date), dayName(r.date), r.tenant]);
+  pdf.setFontSize(10);
+  pdf.text(
+    `${displayDate(generatedRoster[0].date)} - ${
+      displayDate(generatedRoster[generatedRoster.length - 1].date)
+    }`,
+    14,
+    26
+  );
 
   pdf.autoTable({
     head: [["Date", "Day", "Tenant"]],
-    body: rows,
+    body: generatedRoster.map(r => [
+      displayDate(r.date),
+      dayName(r.date),
+      r.tenant
+    ]),
+
     startY: 34,
-    headStyles: { fillColor: [43, 69, 49] }, // matches --green
-    didParseCell: (data) => {
-      if (data.section === "body" && data.column.index === 2) {
-        const hex = colorForName(data.cell.raw);
+
+    headStyles: {
+      fillColor: [43, 69, 49]
+    },
+
+    didParseCell: function(data) {
+
+      if (data.section === "body") {
+
+        const tenant =
+          data.row.raw[2];
+
+        const hex =
+          colorForName(tenant);
+
         const rgb = [
-          parseInt(hex.slice(1, 3), 16),
-          parseInt(hex.slice(3, 5), 16),
-          parseInt(hex.slice(5, 7), 16)
+          parseInt(hex.substr(1,2),16),
+          parseInt(hex.substr(3,2),16),
+          parseInt(hex.substr(5,2),16)
         ];
-        data.cell.styles.textColor = rgb;
-        data.cell.styles.fontStyle = "bold";
+
+        data.cell.styles.fillColor = rgb;
+        data.cell.styles.textColor = [255,255,255];
       }
     }
   });
