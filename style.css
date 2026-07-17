@@ -368,9 +368,13 @@ input:focus, select:focus, button:focus-visible {
   border-bottom: 1px solid var(--sage);
 }
 
+.roster-table tr.is-today {
+  outline: 2px solid var(--amber);
+  outline-offset: -2px;
+}
+
 .roster-table tr.is-today td {
-  color: var(--green);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .roster-table tr.is-today td:last-child::after {
@@ -387,4 +391,17 @@ input:focus, select:focus, button:focus-visible {
   h1 { font-size: 32px; }
   .tag-name { font-size: 24px; }
   .wrap { padding: 32px 16px 64px; }
+}
+
+.roster-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.roster-table tbody tr:hover {
+  transform: translateX(4px);
+  filter: brightness(0.98);
+}
+
+.roster-table td {
+  padding: 14px 12px;
 }

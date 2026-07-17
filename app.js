@@ -94,14 +94,16 @@ function escapeHtml(str) {
 // Each tenant gets a consistent color derived from their name, so the same
 // person always shows the same color across the tag card, table, and PDF.
 const TENANT_COLORS = [
-  "#B5651D", // ochre
-  "#3A6EA5", // blue
-  "#9C4F6B", // mauve
-  "#2E7D6B", // teal
-  "#6B4E9E", // violet
-  "#7C6B2E", // olive gold
-  "#4E7A3A", // moss green
-  "#A5453A"  // brick red
+  "#4F46E5",
+  "#2563EB",
+  "#0891B2",
+  "#059669",
+  "#CA8A04",
+  "#DC2626",
+  "#DB2777",
+  "#7C3AED",
+  "#4338CA",
+  "#0F766E"
 ];
 
 function colorForName(name) {
@@ -139,7 +141,7 @@ function renderPublicView(data) {
 
       $body.append(
         `<tr class="${isToday ? "is-today" : ""}"
-          style="background-color:${tenantColor};color:white;"
+          style="background-color:${tenantColor}20; border-left: 6px solid ${tenantColor};"
           <td>${displayDate(r.date)}</td>
           <td>${dayName(r.date)}</td>
           <td>${escapeHtml(r.tenant)}</td>
