@@ -94,16 +94,14 @@ function escapeHtml(str) {
 // Each tenant gets a consistent color derived from their name, so the same
 // person always shows the same color across the tag card, table, and PDF.
 const TENANT_COLORS = [
-  "#4F46E5",
-  "#2563EB",
-  "#0891B2",
-  "#059669",
-  "#CA8A04",
-  "#DC2626",
-  "#DB2777",
-  "#7C3AED",
-  "#4338CA",
-  "#0F766E"
+  "#3B82F6",
+  "#6366F1",
+  "#8B5CF6",
+  "#EC4899",
+  "#14B8A6",
+  "#10B981",
+  "#F59E0B",
+  "#EF4444"
 ];
 
 function colorForName(name) {
@@ -142,9 +140,8 @@ function renderPublicView(data) {
       $body.append(
         `<tr class="${isToday ? "is-today" : ""}"
           style="
-  background:${hexToRGBA(tenantColor)};
-  border-left:6px solid ${tenantColor};
-">
+            background:#f8f9fa;
+            border-left:6px solid ${tenantColor};">
           <td>${displayDate(r.date)}</td>
           <td>${dayName(r.date)}</td>
           <td>${escapeHtml(r.tenant)}</td>
@@ -378,28 +375,13 @@ $("#download-pdf-btn").on("click", () => {
 
       if (data.section === "body") {
 
-        const tenant =
-          data.row.raw[2];
+        data.cell.styles.textColor = [38, 38, 31];
 
-        const hex =
-          colorForName(tenant);
-
-        function hexToRGBA(hex, opacity = 0.12) {
-          const r = parseInt(hex.slice(1, 3), 16);
-          const g = parseInt(hex.slice(3, 5), 16);
-          const b = parseInt(hex.slice(5, 7), 16);
-
-          return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        if (data.row.index % 2 === 0) {
+          data.cell.styles.fillColor = [246, 245, 241];
+        } else {
+          data.cell.styles.fillColor = [232, 234, 228];
         }
-
-        const rgb = [
-          parseInt(hex.substr(1, 2), 16),
-          parseInt(hex.substr(3, 2), 16),
-          parseInt(hex.substr(5, 2), 16)
-        ];
-
-        data.cell.styles.fillColor = rgb;
-        data.cell.styles.textColor = [255, 255, 255];
       }
     }
   });
