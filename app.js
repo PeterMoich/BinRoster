@@ -334,8 +334,12 @@ $("#reset-btn").on("click", async () => {
 
 // ---- Download PDF ----
 
-$("#download-pdf-btn").on("click", () => {
+function hexToRgb(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
 
+$("#download-pdf-btn").on("click", () => {
   const generatedRoster = currentConfig.generatedRoster || [];
 
   if (!generatedRoster.length) {
@@ -351,8 +355,7 @@ $("#download-pdf-btn").on("click", () => {
 
   pdf.setFontSize(10);
   pdf.text(
-    `${displayDate(generatedRoster[0].date)} - ${displayDate(generatedRoster[generatedRoster.length - 1].date)
-    }`,
+    `${displayDate(generatedRoster[0].date)} - ${displayDate(generatedRoster[generatedRoster.length - 1].date)}`,
     14,
     26
   );
@@ -371,17 +374,26 @@ $("#download-pdf-btn").on("click", () => {
       fillColor: [43, 69, 49]
     },
 
+    // Extra left padding in the first column so text clears the colour stripe
+    columnStyles: {
+      0: { cellPadding: { top: 3, right: 3, bottom: 3, left: 7 } }
+    },
+
     didParseCell: function (data) {
-
       if (data.section === "body") {
-
         data.cell.styles.textColor = [38, 38, 31];
+        data.cell.styles.fillColor =
+          data.row.index % 2 === 0 ? [246, 245, 241] : [232, 234, 228];
+      }
+    },
 
-        if (data.row.index % 2 === 0) {
-          data.cell.styles.fillColor = [246, 245, 241];
-        } else {
-          data.cell.styles.fillColor = [232, 234, 228];
-        }
+    // Draw the tenant colour stripe on the left edge of each row
+    didDrawCell: function (data) {
+      if (data.section === "body" && data.column.index === 0) {
+        const tenant = generatedRoster[data.row.index].tenant;
+        const [r, g, b] = hexToRgb(colorForName(tenant));
+        pdf.setFillColor(r, g, b);
+        pdf.rect(data.cell.x, data.cell.y, 3, data.cell.height, "F");
       }
     }
   });
